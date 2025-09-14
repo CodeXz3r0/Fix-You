@@ -64,46 +64,46 @@
     let isBlackBg = true; // track background state
 
     const lyrics = [
-  { time: 14, text: "When you try your best but you don't succeed" },
-  { time: 20.4, text: "When you get what you want but not what you need" },
-  { time: 26.2, text: "When you feel so tired but you can't sleep" },
-  { time: 32.9, text: "Stuck in reverse" },
+  { time: 15, text: "When you try your best but you don't succeed" },
+  { time: 21.4, text: "When you get what you want but not what you need" },
+  { time: 27.2, text: "When you feel so tired but you can't sleep" },
+  { time: 33.9, text: "Stuck in reverse" },
 
-  { time: 40.9, text: "And the tears come streaming down your face" },
-  { time: 47.8, text: "When you lose something you can't replace" },
-  { time: 53.9, text: "When you love someone but it goes to waste" },
-  { time: 60.8, text: "Could it be worse?" },
+  { time: 41.9, text: "And the tears come streaming down your face" },
+  { time: 48.8, text: "When you lose something you can't replace" },
+  { time: 54.9, text: "When you love someone but it goes to waste" },
+  { time: 61.8, text: "Could it be worse?" },
 
-  { time: 70.7, text: "Lights will guide you home" },
-  { time: 77.6, text: "And ignite your bones" },
-  { time: 84.7, text: "And I will try to fix you" },
+  { time: 71.7, text: "Lights will guide you home" },
+  { time: 78.6, text: "And ignite your bones" },
+  { time: 85.7, text: "And I will try to fix you" },
 
   // Verse 2
-  { time: 105.6, text: "And high up above or down below" },
-  { time: 113.9, text: "When you're too in love to let it go" },
-  { time: 118.7, text: "But if you never try you'll never know" },
-  { time: 124.8, text: "Just what you're worth" },
+  { time: 106.6, text: "And high up above or down below" },
+  { time: 114.9, text: "When you're too in love to let it go" },
+  { time: 119.7, text: "But if you never try you'll never know" },
+  { time: 125.8, text: "Just what you're worth" },
 
   // Chorus 2
-  { time: 135.8, text: "Lights will guide you home" },
-  { time: 141.8, text: "And ignite your bones" },
-  { time: 149.9, text: "And I will try to fix you" },
+  { time: 136.8, text: "Lights will guide you home" },
+  { time: 142.8, text: "And ignite your bones" },
+  { time: 150.9, text: "And I will try to fix you" },
 
   // Bridge / Instrumental
-  { time: 211.9, text: "Tears stream down your face" },
-  { time: 217.0, text: "When you lose something you cannot replace" },
-  { time: 224.9, text: "Tears stream down your face" },
-  { time: 230.1, text: "And I..." },
+  { time: 212.9, text: "Tears stream down your face" },
+  { time: 218.0, text: "When you lose something you cannot replace" },
+  { time: 225.9, text: "Tears stream down your face" },
+  { time: 231.1, text: "And I..." },
 
-  { time: 238.9, text: "Tears stream down your face" },
-  { time: 244.9, text: "I promise you I will learn from my mistakes" },
-  { time: 252.8, text: "Tears stream down your face" },
-  { time: 257.2, text: "And I..." },
+  { time: 239.9, text: "Tears stream down your face" },
+  { time: 245.9, text: "I promise you I will learn from my mistakes" },
+  { time: 253.8, text: "Tears stream down your face" },
+  { time: 258.2, text: "And I..." },
 
   // Final Chorus
-  { time: 266.3, text: "Lights will guide you home" },
-  { time: 273.8, text: "And ignite your bones" },
-  { time: 279.7, text: "And I will try to fix you" }
+  { time: 267.3, text: "Lights will guide you home" },
+  { time: 274.8, text: "And ignite your bones" },
+  { time: 280.7, text: "And I will try to fix you" }
 ];
 
 
@@ -118,7 +118,7 @@
     audio.addEventListener('timeupdate', () => {
       const current = audio.currentTime;
       let newIndex = lyrics.findIndex((line, i) => {
-        const next = lyrics[i + 1];
+        const next = lyrics[i + 0];
         return current >= line.time && (!next || current < next.time);
       });
 
