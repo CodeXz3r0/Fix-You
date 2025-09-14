@@ -116,33 +116,37 @@
     });
 
     audio.addEventListener('timeupdate', () => {
-      const current = audio.currentTime;
-      let newIndex = lyrics.findIndex((line, i) => {
-        const next = lyrics[i + 1];
-        return current >= line.time && (!next || current < next.time);
-      });
+  const current = audio.currentTime;
 
-      if (newIndex !== currentIndex) {
-        currentIndex = newIndex;
-        if (currentIndex >= 0) {
-          lyricsDiv.textContent = lyrics[currentIndex].text;
+  // find the latest lyric that should be showing
+  let newIndex = -1;
+  for (let i = 0; i < lyrics.length; i++) {
+    if (current >= lyrics[i].time) {
+      newIndex = i;
+    }
+  }
 
-          // toggle background & font
-          isBlackBg = !isBlackBg;
-          if (isBlackBg) {
-            document.body.style.background = "black";
-            lyricsDiv.style.color = "white";
-            lyricsDiv.style.textShadow = "0 0 8px rgba(255,255,255,0.8)";
-          } else {
-            document.body.style.background = "white";
-            lyricsDiv.style.color = "black";
-            lyricsDiv.style.textShadow = "0 0 8px rgba(0,0,0,0.6)";
-          }
-        } else {
-          lyricsDiv.textContent = "";
-        }
+  if (newIndex !== currentIndex) {
+    currentIndex = newIndex;
+    if (currentIndex >= 0) {
+      lyricsDiv.textContent = lyrics[currentIndex].text;
+
+      // toggle background & font
+      isBlackBg = !isBlackBg;
+      if (isBlackBg) {
+        document.body.style.background = "black";
+        lyricsDiv.style.color = "white";
+        lyricsDiv.style.textShadow = "0 0 8px rgba(255,255,255,0.8)";
+      } else {
+        document.body.style.background = "white";
+        lyricsDiv.style.color = "black";
+        lyricsDiv.style.textShadow = "0 0 8px rgba(0,0,0,0.6)";
       }
-    });
+    } else {
+      lyricsDiv.textContent = "";
+    }
+  }
+});
   </script>
 </body>
 </html>
