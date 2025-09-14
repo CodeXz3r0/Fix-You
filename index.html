@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fix You</title>
+  <title>Fix You :(</title>
 
   <!-- Pixelated font -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -15,7 +15,6 @@
       color: white;
       font-family: 'Press Start 2P', cursive;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
@@ -26,7 +25,7 @@
     #overlay {
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.9);
+      background: rgba(0,0,0,0.95);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -36,13 +35,13 @@
     }
 
     #lyrics {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
+      max-width: 80%;
       line-height: 2rem;
-      white-space: pre-line;
     }
 
-    .active {
-      color: yellow;
+    .hidden {
+      display: none;
     }
   </style>
 </head>
@@ -51,14 +50,14 @@
   <div id="lyrics"></div>
 
   <!-- Your song file -->
-  <audio id="song" src="Fix You.mp3"></audio>
+  <audio id="song" src="fixyou.mp3"></audio>
 
   <script>
     const audio = document.getElementById('song');
     const overlay = document.getElementById('overlay');
     const lyricsDiv = document.getElementById('lyrics');
 
-    // Karaoke lyrics with timestamps (in seconds)
+    // Karaoke lyrics with timestamps (seconds)
     const lyrics = [
       { time: 15, text: "When you try your best but you don't succeed" },
       { time: 22, text: "When you get what you want but not what you need" },
@@ -73,14 +72,7 @@
       { time: 97, text: "And I will try to fix you" }
     ];
 
-    // Create lyric elements
-    lyrics.forEach(line => {
-      const p = document.createElement('p');
-      p.textContent = line.text;
-      lyricsDiv.appendChild(p);
-      line.element = p;
-    });
-
+    let currentIndex = -1;
     let started = false;
 
     overlay.addEventListener('click', () => {
@@ -91,16 +83,18 @@
       }
     });
 
-    // Sync lyrics
     audio.addEventListener('timeupdate', () => {
       const current = audio.currentTime;
-      lyrics.forEach((line, i) => {
-        if (current >= line.time && (i === lyrics.length - 1 || current < lyrics[i + 1].time)) {
-          line.element.classList.add('active');
-        } else {
-          line.element.classList.remove('active');
-        }
+      // Find the active line
+      let newIndex = lyrics.findIndex((line, i) => {
+        const next = lyrics[i + 1];
+        return current >= line.time && (!next || current < next.time);
       });
+
+      if (newIndex !== currentIndex) {
+        currentIndex = newIndex;
+        lyricsDiv.textContent = (currentIndex >= 0) ? lyrics[currentIndex].text : "";
+      }
     });
   </script>
 </body>
