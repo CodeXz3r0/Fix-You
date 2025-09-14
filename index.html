@@ -20,6 +20,7 @@
       height: 100vh;
       overflow: hidden;
       text-align: center;
+      transition: background 0.5s, color 0.5s;
     }
 
     #overlay {
@@ -35,9 +36,11 @@
     }
 
     #lyrics {
-      font-size: 1.3rem;
+      font-size: 1.6rem;
       max-width: 80%;
-      line-height: 2rem;
+      line-height: 2.5rem;
+      text-shadow: 0 0 6px rgba(255,255,255,0.6);
+      transition: color 0.5s, text-shadow 0.5s;
     }
 
     .hidden {
@@ -56,52 +59,47 @@
     const audio = document.getElementById('song');
     const overlay = document.getElementById('overlay');
     const lyricsDiv = document.getElementById('lyrics');
-
-    // Karaoke lyrics with timestamps (seconds)
-    const lyrics = [
-  { time: 15, text: "When you try your best but you don't succeed" },
-  { time: 20, text: "When you get what you want but not what you need" },
-  { time: 26, text: "When you feel so tired but you can't sleep" },
-  { time: 33, text: "Stuck in reverse" },
-  { time: 41, text: "And the tears come streaming down your face" },
-  { time: 48, text: "When you lose something you can't replace" },
-  { time: 54, text: "When you love someone but it goes to waste" },
-  { time: 61, text: "Could it be worse?" },
-
-  { time: 71, text: "Lights will guide you home" },
-  { time: 78, text: "And ignite your bones" },
-  { time: 85, text: "And I will try to fix you" },
-
-  // Verse 2
-  { time: 102, text: "And high up above or down below" },
-  { time: 109, text: "When you're too in love to let it go" },
-  { time: 116, text: "But if you never try you'll never know" },
-  { time: 123, text: "Just what you're worth" },
-
-  // Chorus 2
-  { time: 132, text: "Lights will guide you home" },
-  { time: 139, text: "And ignite your bones" },
-  { time: 146, text: "And I will try to fix you" },
-
-  // Bridge (instrumental pause, no lyrics from ~160s to ~200s)
-  { time: 200, text: "Tears stream down your face" },
-  { time: 206, text: "When you lose something you cannot replace" },
-  { time: 213, text: "Tears stream down your face" },
-  { time: 219, text: "And I..." },
-
-  { time: 227, text: "Tears stream down your face" },
-  { time: 233, text: "I promise you I will learn from my mistakes" },
-  { time: 240, text: "Tears stream down your face" },
-  { time: 246, text: "And I..." },
-
-  // Final Chorus
-  { time: 254, text: "Lights will guide you home" },
-  { time: 261, text: "And ignite your bones" },
-  { time: 268, text: "And I will try to fix you" }
-];
-
     let currentIndex = -1;
     let started = false;
+    let isBlackBg = true; // track background state
+
+    const lyrics = [
+      { time: 15, text: "When you try your best but you don't succeed" },
+      { time: 20, text: "When you get what you want but not what you need" },
+      { time: 26, text: "When you feel so tired but you can't sleep" },
+      { time: 33, text: "Stuck in reverse" },
+      { time: 41, text: "And the tears come streaming down your face" },
+      { time: 48, text: "When you lose something you can't replace" },
+      { time: 54, text: "When you love someone but it goes to waste" },
+      { time: 61, text: "Could it be worse?" },
+
+      { time: 71, text: "Lights will guide you home" },
+      { time: 78, text: "And ignite your bones" },
+      { time: 85, text: "And I will try to fix you" },
+
+      { time: 102, text: "And high up above or down below" },
+      { time: 109, text: "When you're too in love to let it go" },
+      { time: 116, text: "But if you never try you'll never know" },
+      { time: 123, text: "Just what you're worth" },
+
+      { time: 132, text: "Lights will guide you home" },
+      { time: 139, text: "And ignite your bones" },
+      { time: 146, text: "And I will try to fix you" },
+
+      { time: 200, text: "Tears stream down your face" },
+      { time: 206, text: "When you lose something you cannot replace" },
+      { time: 213, text: "Tears stream down your face" },
+      { time: 219, text: "And I..." },
+
+      { time: 227, text: "Tears stream down your face" },
+      { time: 233, text: "I promise you I will learn from my mistakes" },
+      { time: 240, text: "Tears stream down your face" },
+      { time: 246, text: "And I..." },
+
+      { time: 254, text: "Lights will guide you home" },
+      { time: 261, text: "And ignite your bones" },
+      { time: 268, text: "And I will try to fix you" }
+    ];
 
     overlay.addEventListener('click', () => {
       if (!started) {
@@ -113,7 +111,6 @@
 
     audio.addEventListener('timeupdate', () => {
       const current = audio.currentTime;
-      // Find the active line
       let newIndex = lyrics.findIndex((line, i) => {
         const next = lyrics[i + 1];
         return current >= line.time && (!next || current < next.time);
@@ -121,7 +118,23 @@
 
       if (newIndex !== currentIndex) {
         currentIndex = newIndex;
-        lyricsDiv.textContent = (currentIndex >= 0) ? lyrics[currentIndex].text : "";
+        if (currentIndex >= 0) {
+          lyricsDiv.textContent = lyrics[currentIndex].text;
+
+          // toggle background & font
+          isBlackBg = !isBlackBg;
+          if (isBlackBg) {
+            document.body.style.background = "black";
+            lyricsDiv.style.color = "white";
+            lyricsDiv.style.textShadow = "0 0 8px rgba(255,255,255,0.8)";
+          } else {
+            document.body.style.background = "white";
+            lyricsDiv.style.color = "black";
+            lyricsDiv.style.textShadow = "0 0 8px rgba(0,0,0,0.6)";
+          }
+        } else {
+          lyricsDiv.textContent = "";
+        }
       }
     });
   </script>
