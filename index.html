@@ -3,7 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Fix You Lyrics Visualizer</title>
+  <title>Fix You Karaoke</title>
+
+  <!-- Pixelated font -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
   <style>
     body {
       margin: 0;
@@ -13,14 +17,16 @@
       justify-content: center;
       background: black;
       transition: background 0.6s ease;
+      cursor: pointer;
     }
     #lyrics {
-      font-size: 7vw; /* increased font size */
-      font-family: monospace;
+      font-size: 6.5vw;
+      font-family: 'Press Start 2P', monospace;
       color: white;
       text-align: center;
       text-shadow: 0 0 12px rgba(0,0,0,0.8);
       max-width: 90%;
+      line-height: 1.5;
       opacity: 0;
       transform: scale(0.95);
       transition: opacity 0.6s ease, transform 0.6s ease;
@@ -29,11 +35,81 @@
       opacity: 1;
       transform: scale(1.05);
     }
+    #overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.9);
+      color: white;
+      font-size: 5vw;
+      font-family: 'Press Start 2P', monospace;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
+  <div id="overlay">CLICK TO START</div>
   <div id="lyrics"></div>
-  <audio id="song" src="SpotiDownloader.com - Fix You - Coldplay.mp3" autoplay></audio>
+  <audio id="song" src="SpotiDownloader.com - Fix You - Coldplay.mp3"></audio>
+
+  <script>
+    // Karaoke timestamps (start and end times in seconds)
+    const lyrics = [
+      { text: "When you try your best, but you don't succeed", start: 13, end: 19 },
+      { text: "When you get what you want, but not what you need", start: 20, end: 26 },
+      { text: "When you feel so tired, but you can't sleep", start: 27, end: 32 },
+      { text: "Stuck in reverse", start: 33, end: 37 },
+      { text: "And the tears come streaming down your face", start: 50, end: 56 },
+      { text: "When you lose something you can't replace", start: 57, end: 63 },
+      { text: "When you love someone, but it goes to waste", start: 64, end: 70 },
+      { text: "Could it be worse?", start: 71, end: 75 },
+      { text: "Lights will guide you home", start: 90, end: 96 },
+      { text: "And ignite your bones", start: 97, end: 103 },
+      { text: "And I will try to fix you", start: 104, end: 112 }
+    ];
+
+    const lyricsDiv = document.getElementById("lyrics");
+    const song = document.getElementById("song");
+    const overlay = document.getElementById("overlay");
+
+    function updateLyrics() {
+      const current = song.currentTime;
+      const line = lyrics.find(l => current >= l.start && current <= l.end);
+
+      if (line) {
+        if (lyricsDiv.textContent !== line.text) {
+          lyricsDiv.textContent = line.text;
+          lyricsDiv.classList.add("show");
+
+          // background + text contrast
+          if (lyrics.indexOf(line) % 2 === 0) {
+            document.body.style.background = "black";
+            lyricsDiv.style.color = "white";
+          } else {
+            document.body.style.background = "white";
+            lyricsDiv.style.color = "black";
+          }
+        }
+      } else {
+        lyricsDiv.classList.remove("show");
+      }
+    }
+
+    function startKaraoke() {
+      overlay.style.display = "none";
+      song.play();
+      song.addEventListener("timeupdate", updateLyrics);
+    }
+
+    document.body.addEventListener("click", startKaraoke, { once: true });
+  </script>
+</body>
+</html>
 
   <script>
     const lines = [
