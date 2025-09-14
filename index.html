@@ -45,18 +45,18 @@
 
     .hidden {
       display: none;
+    }
 
     #watermark {
-  position: fixed;
-  bottom: 10px;
-  width: 100%;
-  text-align: center;
-  font-size: 0.9rem;
-  color: rgba(255,255,255,0.6);
-  text-shadow: 0 0 4px rgba(0,0,0,0.5);
-  pointer-events: none; /* so it won't block clicks */
-    }
-      
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9rem;
+      color: white;
+      text-shadow: 0 0 4px rgba(255,255,255,0.6);
+      pointer-events: none; /* so it won't block clicks */
+      transition: color 0.5s, text-shadow 0.5s;
     }
   </style>
 </head>
@@ -72,56 +72,56 @@
     const audio = document.getElementById('song');
     const overlay = document.getElementById('overlay');
     const lyricsDiv = document.getElementById('lyrics');
+    const watermark = document.getElementById('watermark');
     let currentIndex = -1;
     let started = false;
     let isBlackBg = true; // track background state
 
     const lyrics = [
-  { time: 14.3, text: "When you try your best but you don't succeed" },
-  { time: 21.4, text: "When you get what you want but not what you need" },
-  { time: 28.1, text: "When you feel so tired but you can't sleep" },
-  { time: 34.4, text: "Stuck in reverse" },
+      { time: 14.3, text: "When you try your best but you don't succeed" },
+      { time: 21.4, text: "When you get what you want but not what you need" },
+      { time: 28.1, text: "When you feel so tired but you can't sleep" },
+      { time: 34.4, text: "Stuck in reverse" },
 
-  { time: 42.6, text: "And the tears come streaming down your face" },
-  { time: 49.5, text: "When you lose something you can't replace" },
-  { time: 56.1, text: "When you love someone but it goes to waste" },
-  { time: 62.7, text: "Could it be worse?" },
+      { time: 42.6, text: "And the tears come streaming down your face" },
+      { time: 49.5, text: "When you lose something you can't replace" },
+      { time: 56.1, text: "When you love someone but it goes to waste" },
+      { time: 62.7, text: "Could it be worse?" },
 
-  { time: 73, text: "Lights will guide you home" },
-  { time: 80.1, text: "And ignite your bones" },
-  { time: 86.7, text: "And I will try to.." },
-  { time: 91.1, text: "Fix You" },
+      { time: 73, text: "Lights will guide you home" },
+      { time: 80.1, text: "And ignite your bones" },
+      { time: 86.7, text: "And I will try to.." },
+      { time: 91.1, text: "Fix You" },
 
-  // Verse 2
-  { time: 105.8, text: "And high up above or down below" },
-  { time: 113.1, text: "When you're too in love to let it go" },
-  { time: 119.7, text: "But if you never try you'll never know" },
-  { time: 126.2, text: "Just what you're worth" },
+      // Verse 2
+      { time: 105.8, text: "And high up above or down below" },
+      { time: 113.1, text: "When you're too in love to let it go" },
+      { time: 119.7, text: "But if you never try you'll never know" },
+      { time: 126.2, text: "Just what you're worth" },
 
-  // Chorus 2
-  { time: 136.3, text: "Lights will guide you home" },
-  { time: 143.4, text: "And ignite your bones" },
-  { time: 150.5, text: "And I will try to.." },
-  { time: 154.9, text: "Fix You" },
+      // Chorus 2
+      { time: 136.3, text: "Lights will guide you home" },
+      { time: 143.4, text: "And ignite your bones" },
+      { time: 150.5, text: "And I will try to.." },
+      { time: 154.9, text: "Fix You" },
 
-  // Bridge / Instrumental
-  { time: 211.9, text: "Tears stream down your face" },
-  { time: 218.3, text: "When you lose something you cannot replace" },
-  { time: 225.4, text: "Tears stream down your face" },
-  { time: 230.4, text: "And I..." },
+      // Bridge / Instrumental
+      { time: 211.9, text: "Tears stream down your face" },
+      { time: 218.3, text: "When you lose something you cannot replace" },
+      { time: 225.4, text: "Tears stream down your face" },
+      { time: 230.4, text: "And I..." },
 
-  { time: 239.2, text: "Tears stream down your face" },
-  { time: 245.4, text: "I promise you I will learn from my mistakes" },
-  { time: 252.8, text: "Tears stream down your face" },
-  { time: 257.7, text: "And I..." },
+      { time: 239.2, text: "Tears stream down your face" },
+      { time: 245.4, text: "I promise you I will learn from my mistakes" },
+      { time: 252.8, text: "Tears stream down your face" },
+      { time: 257.7, text: "And I..." },
 
-  // Final Chorus
-  { time: 266.7, text: "Lights will guide you home" },
-  { time: 273.8, text: "And ignite your bones" },
-  { time: 280.3, text: "And I will try to.." },
-  { time: 284.7, text: "Fix You" }
-];
-
+      // Final Chorus
+      { time: 266.7, text: "Lights will guide you home" },
+      { time: 273.8, text: "And ignite your bones" },
+      { time: 280.3, text: "And I will try to.." },
+      { time: 284.7, text: "Fix You" }
+    ];
 
     overlay.addEventListener('click', () => {
       if (!started) {
@@ -132,37 +132,41 @@
     });
 
     audio.addEventListener('timeupdate', () => {
-  const current = audio.currentTime;
+      const current = audio.currentTime;
 
-  // find the latest lyric that should be showing
-  let newIndex = -1;
-  for (let i = 0; i < lyrics.length; i++) {
-    if (current >= lyrics[i].time) {
-      newIndex = i;
-    }
-  }
-
-  if (newIndex !== currentIndex) {
-    currentIndex = newIndex;
-    if (currentIndex >= 0) {
-      lyricsDiv.textContent = lyrics[currentIndex].text;
-
-      // toggle background & font
-      isBlackBg = !isBlackBg;
-      if (isBlackBg) {
-        document.body.style.background = "black";
-        lyricsDiv.style.color = "white";
-        lyricsDiv.style.textShadow = "0 0 8px rgba(255,255,255,0.8)";
-      } else {
-        document.body.style.background = "white";
-        lyricsDiv.style.color = "black";
-        lyricsDiv.style.textShadow = "0 0 8px rgba(0,0,0,0.6)";
+      // find the latest lyric that should be showing
+      let newIndex = -1;
+      for (let i = 0; i < lyrics.length; i++) {
+        if (current >= lyrics[i].time) {
+          newIndex = i;
+        }
       }
-    } else {
-      lyricsDiv.textContent = "";
-    }
-  }
-});
+
+      if (newIndex !== currentIndex) {
+        currentIndex = newIndex;
+        if (currentIndex >= 0) {
+          lyricsDiv.textContent = lyrics[currentIndex].text;
+
+          // toggle background & font
+          isBlackBg = !isBlackBg;
+          if (isBlackBg) {
+            document.body.style.background = "black";
+            lyricsDiv.style.color = "white";
+            lyricsDiv.style.textShadow = "0 0 8px rgba(255,255,255,0.8)";
+            watermark.style.color = "white";
+            watermark.style.textShadow = "0 0 4px rgba(255,255,255,0.6)";
+          } else {
+            document.body.style.background = "white";
+            lyricsDiv.style.color = "black";
+            lyricsDiv.style.textShadow = "0 0 8px rgba(0,0,0,0.6)";
+            watermark.style.color = "black";
+            watermark.style.textShadow = "0 0 4px rgba(0,0,0,0.6)";
+          }
+        } else {
+          lyricsDiv.textContent = "";
+        }
+      }
+    });
   </script>
 </body>
 </html>
