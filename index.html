@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fix You Karaoke</title>
 
   <!-- Pixelated font -->
@@ -11,103 +11,97 @@
   <style>
     body {
       margin: 0;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       background: black;
-      transition: background 0.6s ease;
-      cursor: pointer;
-    }
-    #lyrics {
-      font-size: 6vw;
-      font-family: 'Press Start 2P', monospace; /* pixel font */
       color: white;
+      font-family: 'Press Start 2P', cursive;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
       text-align: center;
-      text-shadow: 0 0 12px rgba(0,0,0,0.8);
-      max-width: 90%;
-      line-height: 1.5;
-      opacity: 0;
-      transform: scale(0.95);
-      transition: opacity 0.6s ease, transform 0.6s ease;
     }
-    #lyrics.show {
-      opacity: 1;
-      transform: scale(1.05);
-    }
+
     #overlay {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
       display: flex;
-      align-items: center;
       justify-content: center;
-      background: rgba(0,0,0,0.95);
-      color: white;
-      font-size: 4vw;
-      font-family: 'Press Start 2P', monospace;
-      text-align: center;
+      align-items: center;
+      font-size: 1rem;
+      cursor: pointer;
       z-index: 10;
+    }
+
+    #lyrics {
+      font-size: 1.2rem;
+      line-height: 2rem;
+      white-space: pre-line;
+    }
+
+    .active {
+      color: yellow;
     }
   </style>
 </head>
 <body>
-  <div id="overlay">CLICK TO START</div>
+  <div id="overlay">Click anywhere to start</div>
   <div id="lyrics"></div>
+
+  <!-- Your song file -->
   <audio id="song" src="fixyou.mp3"></audio>
 
   <script>
-    // Karaoke timestamps (start and end times in seconds)
+    const audio = document.getElementById('song');
+    const overlay = document.getElementById('overlay');
+    const lyricsDiv = document.getElementById('lyrics');
+
+    // Karaoke lyrics with timestamps (in seconds)
     const lyrics = [
-      { text: "When you try your best, but you don't succeed", start: 13, end: 19 },
-      { text: "When you get what you want, but not what you need", start: 20, end: 26 },
-      { text: "When you feel so tired, but you can't sleep", start: 27, end: 32 },
-      { text: "Stuck in reverse", start: 33, end: 37 },
-      { text: "And the tears come streaming down your face", start: 50, end: 56 },
-      { text: "When you lose something you can't replace", start: 57, end: 63 },
-      { text: "When you love someone, but it goes to waste", start: 64, end: 70 },
-      { text: "Could it be worse?", start: 71, end: 75 },
-      { text: "Lights will guide you home", start: 90, end: 96 },
-      { text: "And ignite your bones", start: 97, end: 103 },
-      { text: "And I will try to fix you", start: 104, end: 112 }
+      { time: 15, text: "When you try your best but you don't succeed" },
+      { time: 22, text: "When you get what you want but not what you need" },
+      { time: 29, text: "When you feel so tired but you can't sleep" },
+      { time: 36, text: "Stuck in reverse" },
+      { time: 49, text: "And the tears come streaming down your face" },
+      { time: 56, text: "When you lose something you can't replace" },
+      { time: 63, text: "When you love someone but it goes to waste" },
+      { time: 70, text: "Could it be worse?" },
+      { time: 83, text: "Lights will guide you home" },
+      { time: 90, text: "And ignite your bones" },
+      { time: 97, text: "And I will try to fix you" }
     ];
 
-    const lyricsDiv = document.getElementById("lyrics");
-    const song = document.getElementById("song");
-    const overlay = document.getElementById("overlay");
+    // Create lyric elements
+    lyrics.forEach(line => {
+      const p = document.createElement('p');
+      p.textContent = line.text;
+      lyricsDiv.appendChild(p);
+      line.element = p;
+    });
 
-    function updateLyrics() {
-      const current = song.currentTime;
-      const line = lyrics.find(l => current >= l.start && current <= l.end);
+    let started = false;
 
-      if (line) {
-        if (lyricsDiv.textContent !== line.text) {
-          lyricsDiv.textContent = line.text;
-          lyricsDiv.classList.add("show");
-
-          // alternate background + text color
-          if (lyrics.indexOf(line) % 2 === 0) {
-            document.body.style.background = "black";
-            lyricsDiv.style.color = "white";
-          } else {
-            document.body.style.background = "white";
-            lyricsDiv.style.color = "black";
-          }
-        }
-      } else {
-        lyricsDiv.classList.remove("show");
+    overlay.addEventListener('click', () => {
+      if (!started) {
+        overlay.style.display = 'none';
+        audio.play();
+        started = true;
       }
-    }
+    });
 
-    function startKaraoke() {
-      overlay.style.display = "none"; // hide start overlay
-      song.play();
-      song.addEventListener("timeupdate", updateLyrics);
-    }
-
-    document.body.addEventListener("click", startKaraoke, { once: true });
+    // Sync lyrics
+    audio.addEventListener('timeupdate', () => {
+      const current = audio.currentTime;
+      lyrics.forEach((line, i) => {
+        if (current >= line.time && (i === lyrics.length - 1 || current < lyrics[i + 1].time)) {
+          line.element.classList.add('active');
+        } else {
+          line.element.classList.remove('active');
+        }
+      });
+    });
   </script>
 </body>
 </html>
