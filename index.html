@@ -118,7 +118,7 @@
     audio.addEventListener('timeupdate', () => {
       const current = audio.currentTime;
       let newIndex = lyrics.findIndex((line, i) => {
-        const next = lyrics[i + 0];
+        const next = lyrics[i + 1];
         return current >= line.time && (!next || current < next.time);
       });
 
